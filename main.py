@@ -26,6 +26,7 @@ def print_performance_table(results: list):
 
 
 def read_matrix(size: int, name: str = "행렬") -> list:
+    """N×N 행렬 입력 (오류 시 재입력)"""
     print(f"\n[{name}] {size}x{size} 입력 (공백 구분):")
     matrix = []
     for i in range(size):
@@ -42,6 +43,28 @@ def read_matrix(size: int, name: str = "행렬") -> list:
     return matrix
 
 
+def read_binary_matrix(size: int, name: str = "행렬") -> list:
+    """N×N 이진 행렬 입력 - 0과 1만 허용 (오류 시 재입력)"""
+    print(f"\n[{name}] {size}x{size} 입력 (0 또는 1만, 공백 구분):")
+    matrix = []
+    for i in range(size):
+        while True:
+            try:
+                values = input(f"  {i+1}행: ").strip().split()
+                if len(values) != size:
+                    print(f"  {size}개 숫자를 공백으로 구분해 입력하세요. (현재 {len(values)}개)")
+                    continue
+                row = [int(v) for v in values]
+                if any(v not in (0, 1) for v in row):
+                    print(f"  0 또는 1만 입력하세요. (입력값: {row})")
+                    continue
+                matrix.append(row)
+                break
+            except ValueError:
+                print("  0 또는 1 정수만 입력하세요.")
+    return matrix
+
+
 # 모드 1: 사용자 입력 (3×3)
 def mode_1_user_input():
     SIZE = 3
@@ -53,10 +76,10 @@ def mode_1_user_input():
     for name, hint in [("필터 A", "예: 0 1 0 / 1 1 1 / 0 1 0"),
                        ("필터 B", "예: 1 0 1 / 0 1 0 / 1 0 1")]:
         print(f"\n--- {name} ({hint}) ---")
-        filters.append(read_matrix(SIZE, name))
+        filters.append(read_binary_matrix(SIZE, name))
         print(f"  {name} 저장 완료")
 
-    pattern = read_matrix(SIZE, "패턴")
+    pattern = read_binary_matrix(SIZE, "패턴")
     print("  패턴 저장 완료")
 
     scores, times = [], []
@@ -105,15 +128,15 @@ def _fail(p_key: str, expected: str, reason: str, fail_list: list) -> None:
 def _load_json(filepath: str) -> dict:
     """JSON 로드, 실패 시 자동 생성"""
     if not os.path.exists(filepath):
-        print(f"  ⚠ {filepath} 없음. 자동 생성합니다...")
+        print(f" {filepath} 없음. 자동 생성합니다...")
         return build_data_json(filepath)
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
-        print(f"  ✅ {filepath} 로드 완료")
+        print(f" {filepath} 로드 완료")
         return data
     except json.JSONDecodeError as e:
-        print(f"  ❌ JSON 파싱 오류: {e}. 재생성합니다...")
+        print(f" JSON 파싱 오류: {e}. 재생성합니다...")
         return build_data_json(filepath)
 
 
@@ -125,7 +148,7 @@ def mode_2_json_analysis():
 
     data = _load_json("data.json")
     if "filters" not in data or "patterns" not in data:
-        print("  ❌ 'filters' 또는 'patterns' 키 없음. 분석 중단.")
+        print(" 'filters' 또는 'patterns' 키 없음. 분석 중단.")
         return
 
     filters, patterns = data["filters"], data["patterns"]
@@ -203,9 +226,9 @@ def mode_2_json_analysis():
     if fail_list:
         print("\n  --- 실패 케이스 ---")
         for key, reason in fail_list:
-            print(f"    ❌ {key}: {reason}")
+            print(f"  {key}: {reason}")
     else:
-        print("\n  🎉 모든 테스트 통과!")
+        print("\n  모든 테스트 통과!")
         print("  → 라벨 정규화(+→Cross, x→X)와 epsilon 비교 정책으로 0 FAIL 달성.")
     print("=" * 65)
 
@@ -219,21 +242,24 @@ def main():
         "2": ("data.json 분석 (일괄 판정)",    mode_2_json_analysis),
         "3": ("data.json 생성만",              lambda: build_data_json("data.json")),
     }
-    while True:
-        print("실행 모드를 선택하세요:")
-        for k, (desc, _) in menu.items():
-            print(f"  {k}) {desc}")
-        print("  q) 종료\n")
+    try:
+        while True:
+            print("실행 모드를 선택하세요:")
+            for k, (desc, _) in menu.items():
+                print(f"  {k}) {desc}")
+            print("  q) 종료\n")
 
-        choice = input("선택 >>> ").strip()
-        if choice in menu:
-            menu[choice][1]()
-        elif choice.lower() == "q":
-            print("\n프로그램을 종료합니다. 수고하셨습니다!")
-            break
-        else:
-            print("잘못된 입력입니다. 1, 2, 3, q 중 선택하세요.")
-        print()
+            choice = input("선택 >>> ").strip()
+            if choice in menu:
+                menu[choice][1]()
+            elif choice.lower() == "q":
+                print("\n프로그램을 종료합니다. 수고하셨습니다!")
+                break
+            else:
+                print("잘못된 입력입니다. 1, 2, 3, q 중 선택하세요.")
+            print()
+    except (KeyboardInterrupt, EOFError):
+        print("\n\n프로그램을 종료합니다. 수고하셨습니다!")
 
 
 if __name__ == "__main__":

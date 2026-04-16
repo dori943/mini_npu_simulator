@@ -11,20 +11,17 @@ LABEL_MAP = {
 
 
 def normalize_label(raw: str | None) -> str | None:
-    """다양한 형태의 라벨 → 표준 라벨(Cross/X)"""
     if raw is None:
         return None
     return LABEL_MAP.get(raw) or LABEL_MAP.get(raw.strip().lower())
 
 
 def mac(pattern: list, filt: list) -> float:
-    """MAC(Multiply-Accumulate) 연산: 위치별 곱의 합"""
     n = len(pattern)
     return sum(pattern[i][j] * filt[i][j] for i in range(n) for j in range(n))
 
 
 def judge(score_cross: float, score_x: float) -> str:
-    """점수 비교 → Cross / X / UNDECIDED"""
     diff = score_cross - score_x
     if abs(diff) < EPSILON:
         return "UNDECIDED"
@@ -32,7 +29,6 @@ def judge(score_cross: float, score_x: float) -> str:
 
 
 def measure(pattern: list, filt: list, repeats: int = 10) -> tuple[float, float]:
-    """MAC 연산 반복 측정 → (점수, 평균 시간 ms)"""
     times = []
     score = 0.0
     for _ in range(repeats):
@@ -43,7 +39,6 @@ def measure(pattern: list, filt: list, repeats: int = 10) -> tuple[float, float]
 
 
 def validate_matrix(matrix: list, expected_size: int) -> tuple[bool, str]:
-    """행렬 크기 검증 → (valid, 메시지)"""
     if not isinstance(matrix, list):
         return False, "리스트가 아님"
     if len(matrix) != expected_size:
