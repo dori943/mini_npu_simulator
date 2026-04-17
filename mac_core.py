@@ -21,6 +21,15 @@ def mac(pattern: list, filt: list) -> float:
     return sum(pattern[i][j] * filt[i][j] for i in range(n) for j in range(n))
 
 
+#모드1
+def judge_ab(score_a: float, score_b: float) -> str:
+    diff = score_a - score_b
+    if abs(diff) < EPSILON:
+        return "판정 불가"
+    return "A" if diff > 0 else "B"
+
+
+#모드2
 def judge(score_cross: float, score_x: float) -> str:
     diff = score_cross - score_x
     if abs(diff) < EPSILON:

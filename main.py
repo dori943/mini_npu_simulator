@@ -72,40 +72,40 @@ def mode_1_user_input():
     print("\n" + "=" * 55)
     print(" 모드 1: 사용자 입력 (3x3)")
     print("=" * 55)
-
+ 
     filters = []
     for name, hint in [("필터 A", "예: 0 1 0 / 1 1 1 / 0 1 0"),
                        ("필터 B", "예: 1 0 1 / 0 1 0 / 1 0 1")]:
         print(f"\n--- {name} ({hint}) ---")
         filters.append(read_binary_matrix(SIZE, name))
         print(f"  {name} 저장 완료")
-
+ 
     pattern = read_binary_matrix(SIZE, "패턴")
     print("  패턴 저장 완료")
-
+ 
     scores, times = [], []
     for filt in filters:
         s, t = measure(pattern, filt)
         scores.append(s)
         times.append(t)
-
-    result = judge(scores[0], scores[1])
-
+ 
+    result = judge_ab(scores[0], scores[1])
+ 
     print("\n" + "=" * 55)
     print(" 판정 결과")
     print("=" * 55)
-    for label, score, t in zip(["A(Cross)", "B(X)"], scores, times):
+    for label, score, t in zip(["A", "B"], scores, times):
         print(f"  필터 {label} 점수 : {score}  ({t:.6f} ms)")
     print("  ────────────────────────────────────────")
     print(f"  판정 결과     : {result}")
     msgs = {
-        "UNDECIDED": "두 필터 점수 동일, 판정 불가",
-        "Cross":     "입력 패턴은 십자가(Cross)에 더 유사합니다!",
-        "X":         "입력 패턴은 X자에 더 유사합니다!",
+        "판정 불가": "두 필터의 점수가 동일하여 판정할 수 없습니다.",
+        "A":        "입력 패턴은 필터 A에 더 유사합니다!",
+        "B":        "입력 패턴은 필터 B에 더 유사합니다!",
     }
     print(f"  → {msgs[result]}")
     print("=" * 55)
-
+ 
     print_performance_table([(SIZE, sum(times) / len(times))])
 
 
