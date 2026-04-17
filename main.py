@@ -124,6 +124,7 @@ def _fail(p_key, expected, reason, fail_list,
           score_cross=None, score_x=None, judgment="---"):
     sc = f"{score_cross:<11.2f}" if score_cross is not None else f"{'---':<11}"
     sx = f"{score_x:<11.2f}"    if score_x    is not None else f"{'---':<11}"
+    fail_list.append((p_key, reason))
 
 
 def _load_json(filepath: str) -> dict:

@@ -47,7 +47,7 @@ def measure(pattern: list, filt: list, repeats: int = 10) -> tuple[float, float]
 
         total_time += (end_time - start_time) * 1000
     
-    avg_time = score, avg_time
+    avg_time = total_time / repeats
 
     return score,avg_time
 
