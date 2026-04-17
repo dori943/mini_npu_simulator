@@ -5,11 +5,12 @@ from mac_core import normalize_label, measure, judge, validate_matrix
 from pattern_generator import generate_pattern, build_data_json, PATTERN_KINDS
 
 
-# 공통 UI
 def print_banner():
     print()
-    print("        Mini NPU Simulator v1.0              ")
-    print("      MAC 연산 기반 패턴 판별 시뮬레이터        ")
+    print("---------------------------------------------")
+    print("          Mini NPU Simulator v1.0            ")
+    print("         MAC 연산 기반 패턴 판별 시뮬레이터          ")
+    print("---------------------------------------------")
     print()
 
 
@@ -24,7 +25,7 @@ def print_performance_table(results: list):
         print(f"  {size}x{size:<10}  {size*size:<16}{avg:.6f}")
     print("=" * 55)
 
-
+#module2
 def read_matrix(size: int, name: str = "행렬") -> list:
     """N×N 행렬 입력 (오류 시 재입력)"""
     print(f"\n[{name}] {size}x{size} 입력 (공백 구분):")
@@ -42,7 +43,7 @@ def read_matrix(size: int, name: str = "행렬") -> list:
                 print("  숫자만 입력하세요.")
     return matrix
 
-
+#module1
 def read_binary_matrix(size: int, name: str = "행렬") -> list:
     """N×N 이진 행렬 입력 - 0과 1만 허용 (오류 시 재입력)"""
     print(f"\n[{name}] {size}x{size} 입력 (0 또는 1만, 공백 구분):")
@@ -119,14 +120,13 @@ def _extract_size(key: str):
     return None
 
 
-def _fail(p_key: str, expected: str, reason: str, fail_list: list) -> None:
-    """FAIL 행 출력 + fail_list 추가"""
-    print(f"  {p_key:<16} {'---':<11} {'---':<11} {'---':<11} {expected:<10} FAIL")
-    fail_list.append((p_key, reason))
+def _fail(p_key, expected, reason, fail_list,
+          score_cross=None, score_x=None, judgment="---"):
+    sc = f"{score_cross:<11.2f}" if score_cross is not None else f"{'---':<11}"
+    sx = f"{score_x:<11.2f}"    if score_x    is not None else f"{'---':<11}"
 
 
 def _load_json(filepath: str) -> dict:
-    """JSON 로드, 실패 시 자동 생성"""
     if not os.path.exists(filepath):
         print(f" {filepath} 없음. 자동 생성합니다...")
         return build_data_json(filepath)
@@ -141,7 +141,6 @@ def _load_json(filepath: str) -> dict:
 
 
 def mode_2_json_analysis():
-    """data.json 필터/패턴 일괄 판정 + 성능 분석"""
     print("\n" + "=" * 65)
     print(" 모드 2: data.json 분석")
     print("=" * 65)
@@ -186,7 +185,6 @@ def mode_2_json_analysis():
         if expected is None:
             failed += 1; _fail(p_key, str(raw_exp), f"라벨 정규화 실패: '{raw_exp}'", fail_list); continue
 
-        # 크기 검증: 입력 패턴 + 모든 필터
         targets = [(inp, "입력 패턴")] + [(filter_map[k], f"{k} 필터") for k in PATTERN_KINDS]
         err = next(
             ((lbl, msg) for mat, lbl in targets for ok, msg in [validate_matrix(mat, size_n)] if not ok),
@@ -210,7 +208,6 @@ def mode_2_json_analysis():
 
         print(f"  {p_key:<16} {score_cross:<11.2f} {score_x:<11.2f} {judgment:<11} {expected:<10} {result_str}")
 
-    # 성능 표: 3×3 기준 + data.json 수집 크기
     base3 = generate_pattern(3, "cross")
     _, t3 = measure(base3, base3)
     perf_results = [(3, t3)] + [(n, sum(ts) / len(ts)) for n, ts in sorted(perf.items())]
@@ -233,7 +230,6 @@ def mode_2_json_analysis():
     print("=" * 65)
 
 
-# 메인
 
 def main():
     print_banner()
