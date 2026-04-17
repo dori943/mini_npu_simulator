@@ -38,13 +38,18 @@ def judge(score_cross: float, score_x: float) -> str:
 
 
 def measure(pattern: list, filt: list, repeats: int = 10) -> tuple[float, float]:
-    times = []
+    total_time = 0.0
     score = 0.0
     for _ in range(repeats):
-        t0 = time.perf_counter()
+        start_time = time.perf_counter()
         score = mac(pattern, filt)
-        times.append((time.perf_counter() - t0) * 1000)
-    return score, sum(times) / len(times)
+        end_time = time.perf_counter()
+
+        total_time += (end_time - start_time) * 1000
+    
+    avg_time = score, avg_time
+
+    return score,avg_time
 
 
 def validate_matrix(matrix: list, expected_size: int) -> tuple[bool, str]:
