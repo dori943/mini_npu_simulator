@@ -1,7 +1,6 @@
 # Mini NPU Simulator
 
 MAC(Multiply-Accumulate) 연산 기반 패턴 판별 시뮬레이터입니다.
-3×3부터 25×25까지의 패턴이 Cross(십자가)인지 X인지 판별합니다.
 
 ---
 
