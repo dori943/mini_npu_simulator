@@ -1,7 +1,7 @@
 import json
 import os
 
-from mac_core import normalize_label, measure, judge, validate_matrix
+from mac_core import normalize_label, measure, judge, judge_ab, validate_matrix
 from pattern_generator import generate_pattern, build_data_json, PATTERN_KINDS
 
 
